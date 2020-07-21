@@ -1,7 +1,6 @@
 package com.ll.job.controller;
 
 import com.commons.BaseController;
-import com.ll.job.service.JobService;
 import com.ll.job.domain.JobEntity;
 import com.utils.ReflectUtils;
 import com.utils.ResultVo;
@@ -10,8 +9,6 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.quartz.Job;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -27,10 +24,6 @@ import java.util.Map;
 @RequestMapping("/job")
 public class JobController extends BaseController {
 
-
-    @Autowired
-    private JobService jobService;
-
     @ApiOperation(value = "根据ID重启Job", notes = "根据ID重启定时任务")
     @PostMapping(value = "/refreshJobById")
     public String refreshJobById(
@@ -40,7 +33,6 @@ public class JobController extends BaseController {
     ){
 
         ResultVo resultVo = new ResultVo();
-        Class< ? extends Job> cls = null;
         try {
             this.jobService.updateJob( id,"1" );
             resultVo.setSuccess( super.refresh( id ) );
