@@ -1,0 +1,30 @@
+{
+  "hints": [],
+  "groups": [
+    {
+      "sourceType": "com.config.property.MyConfig",
+      "name": "",
+      "type": "com.config.property.MyConfig"
+    }
+  ],
+  "properties": [
+    {
+      "sourceType": "com.config.property.MyConfig",
+      "defaultValue": 0,
+      "name": "max-retry-num",
+      "type": "java.lang.Integer"
+    },
+    {
+      "sourceType": "com.config.property.MyConfig",
+      "defaultValue": 0,
+      "name": "retry-interval",
+      "type": "java.lang.Integer"
+    },
+    {
+      "sourceType": "com.config.property.MyConfig",
+      "defaultValue": 0,
+      "name": "time-out",
+      "type": "java.lang.Integer"
+    }
+  ]
+}

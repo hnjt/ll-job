@@ -1,0 +1,87 @@
+<settings>
+    <!--<localRepository>D:\software\maven\Repo</localRepository>-->
+    <mirrors>
+
+        <mirror>
+            <id>richfitMirror</id>
+            <url>http://11.11.174.189:8081/repository/maven-public/</url>
+            <mirrorOf>repositoryId,central</mirrorOf>
+        </mirror>
+        <!--<mirror>-->
+        <!--<id>richfitMirrorthirdparty</id>-->
+        <!--<url>http://11.11.174.68:8081/repository/3rd-party/</url>-->
+        <!--<mirrorOf>repositoryId,central</mirrorOf>-->
+        <!--</mirror>-->
+    </mirrors>
+    <servers>
+        <server>
+            <id>releases</id>
+            <username>rdf8user</username>
+            <password>cnpcrd123@QWE</password>
+        </server>
+        <server>
+            <id>snapshots</id>
+            <username>admin</username>
+            <password>admin123</password>
+        </server>
+    </servers>
+    <profiles>
+        <profile>
+            <id>richfitMaven</id>
+            <repositories>
+                <repository>
+                    <id>nexus</id>
+                    <url>http://11.11.174.189:8081/repository/maven-public/</url>
+                    <releases>
+                        <enabled>true</enabled>
+                    </releases>
+                    <snapshots>
+                        <enabled>true</enabled>
+                    </snapshots>
+                </repository>
+
+                <!--<repository>-->
+                    <!--<id>nexus2</id>-->
+                    <!--<url>http://11.11.174.68:8081/repository/3rd-party/</url>-->
+                    <!--<releases>-->
+                        <!--<enabled>true</enabled>-->
+                    <!--</releases>-->
+                    <!--<snapshots>-->
+                        <!--<enabled>true</enabled>-->
+                    <!--</snapshots>-->
+                <!--</repository>-->
+
+            </repositories>
+            <pluginRepositories>
+
+                <pluginRepository>
+                    <id>nexus</id>
+                    <url>http://11.11.174.189:8081/repository/maven-public/</url>
+                    <releases>
+                        <enabled>true</enabled>
+                    </releases>
+                    <snapshots>
+                        <enabled>true</enabled>
+                    </snapshots>
+                </pluginRepository>
+
+                <!--<pluginRepository>-->
+                    <!--<id>nexus2</id>-->
+                    <!--<url>http://11.11.174.68:8081/repository/3rd-party/</url>-->
+                    <!--<releases>-->
+                        <!--<enabled>true</enabled>-->
+                    <!--</releases>-->
+                    <!--<snapshots>-->
+                        <!--<enabled>true</enabled>-->
+                    <!--</snapshots>-->
+                <!--</pluginRepository>-->
+
+            </pluginRepositories>
+        </profile>
+
+    </profiles>
+    <activeProfiles>
+        <activeProfile>richfitMaven</activeProfile>
+        <!--<activeProfile>richfitMirrorthirdparty</activeProfile>-->
+    </activeProfiles>
+</settings>  
