@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ll.job.mapper.JobMapper">
+    	
+    <select id="getJobs" resultType="java.util.Map" parameterType="java.util.Map">
+        SELECT * FROM qrtz_job_entity e 
+        <where>
+            <if test="param.name != null and param.name != ''">
+                AND e.job_name LIKE CONCAT('%',#{param.name},'%')
+            </if>
+            <if test="param.ip != null and param.ip != ''">
+                AND d.ip LIKE CONCAT('%',#{param.ip},'%')
+            </if>
+            <if test="param.id != null and param.id != ''">
+                AND e.job_id = #{param.id}
+            </if>
+        </where>
+        ORDER BY e.create_date DESC
+    </select>
+
+    <!--销毁偏移量持久化 begin-->
+    <delete id="qrtz_blob_triggersDestory">
+        DELETE FROM qrtz_blob_triggers
+    </delete>
+    <delete id="qrtz_calendarsDestory">
+        DELETE FROM qrtz_calendars
+    </delete>
+    <delete id="qrtz_cron_triggersDestory">
+        DELETE FROM qrtz_cron_triggers
+    </delete>
+    <delete id="qrtz_fired_triggersDestory">
+        DELETE FROM qrtz_fired_triggers
+    </delete>
+    <delete id="qrtz_locksDestory">
+        DELETE FROM qrtz_locks
+    </delete>
+    <delete id="qrtz_paused_trigger_grpsDestory">
+        DELETE FROM qrtz_paused_trigger_grps
+    </delete>
+    <delete id="qrtz_scheduler_stateDestory">
+        DELETE FROM qrtz_scheduler_state
+    </delete>
+    <delete id="qrtz_simple_triggersDestory">
+        DELETE FROM qrtz_simple_triggers
+    </delete>
+    <delete id="qrtz_simprop_triggersDestory">
+        DELETE FROM qrtz_simprop_triggers
+    </delete>
+    <delete id="qrtz_triggersDestory">
+        DELETE FROM qrtz_triggers
+    </delete>
+    <delete id="qrtz_job_detailsDestory">
+        DELETE FROM qrtz_job_details
+    </delete>
+    <!--销毁偏移量持久化 end-->
+</mapper>

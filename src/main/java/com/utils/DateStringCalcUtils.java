@@ -13,15 +13,6 @@ import java.util.Date;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-/**
- * <p>
- * <li>Description:</li>
- * <li>$Author$</li>
- * <li>$Revision: 4547 $</li>
- * <li>$Date: 2017-05-12 16:10:40 +0800 (Fri, 12 May 2017) $</li>
- * 
- * @version 1.0
- */
 public class DateStringCalcUtils {
 
     /**

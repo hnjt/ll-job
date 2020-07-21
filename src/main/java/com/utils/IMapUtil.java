@@ -1,20 +1,21 @@
+/**
+ * 文件名：IMapUtil.java
+ * 
+ *北京中油瑞飞信息技术有限责任公司(http://www.richfit.com)
+ * Copyright © 2017 Richfit Information Technology Co., LTD. All Right Reserved.
+ */
 package com.utils;
 
-import org.apache.commons.beanutils.PropertyUtils;
-import org.apache.commons.collections4.MapUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-public class ReflectUtils {
-
-    protected static Log log = LogFactory.getLog( ReflectUtils.class);
+@Slf4j
+public class IMapUtil {
 
     /**
      * 利用反射将map集合封装成bean对象
@@ -51,6 +52,10 @@ public class ReflectUtils {
             }
         }
         return (T) obj;
+    }
+
+    public static <T> T mapToBean(Class<?> clazz,Map<String, String> map) throws Exception {
+        return mapToBean(mapStringToHashMapObj(map),clazz);
     }
 
     /**
@@ -139,23 +144,10 @@ public class ReflectUtils {
      * @param map
      * @return
      */
-    public static HashMap<String, Object> mapStrToHashMapObj(Map<String, String> map){
+    public static HashMap<String, Object> mapStringToHashMapObj(Map<String, String> map){
         HashMap<String, Object> resultMap = new HashMap<>();
         for (Entry<String, String> entry : map.entrySet()) {
             resultMap.put( entry.getKey(),entry.getValue());
-        }
-        return resultMap;
-    }
-
-    /**
-     * map Value Objcet 转 String
-     * @param map
-     * @return
-     */
-    public static HashMap<String, String> mapObjToHashMapStr(Map<String, Object> map){
-        HashMap<String, String> resultMap = new HashMap<>();
-        for (Entry<String, Object> entry : map.entrySet()) {
-            resultMap.put( entry.getKey(),entry.getValue().toString());
         }
         return resultMap;
     }
@@ -176,58 +168,4 @@ public class ReflectUtils {
         return filesMap;
     }
 
-    /**
-     * @param paramMap
-     * @param obj
-     * @author created by figo
-     */
-    public static void bindingPropertyValue(Map<String, String> paramMap, Object obj) {
-        if (MapUtils.isEmpty(paramMap) || obj == null) {
-            return;
-        }
-        Map<String, Field> fieldsMap = getDeclaredFieldsMap(obj.getClass());
-        for (Entry<String, String> entry : paramMap.entrySet()) {
-            if (fieldsMap.containsKey(entry.getKey())) {
-                Field field = fieldsMap.get(entry.getKey());
-                Object value = entry.getValue();
-                if (field.getType().getName().equals("java.lang.Integer")) {
-                    value = NumberUtils.toInt(entry.getValue());
-                } else if (field.getType().getName().equals("java.lang.Long")) {
-                    value = NumberUtils.toLong(entry.getValue());
-                } else if (field.getType().getName().equals("java.util.Date")) {
-                    value = DateStringCalcUtils.stringToDateByGeneralYMDHMS(entry.getValue());
-                }
-                try {
-                    PropertyUtils.setProperty(obj, entry.getKey(), value);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    log.error("bindingPropertyValue error! msg is:" + LogUtils.getErrorMsg(e));
-                }
-            }
-        }
-    }
-    public static void bindingPropertyValueFromObject(Map<String, Object> paramMap, Object obj) {
-        if (MapUtils.isEmpty(paramMap) || obj == null) {
-            return;
-        }
-        Map<String, Field> fieldsMap = getDeclaredFieldsMap(obj.getClass());
-        for (Entry<String, Object> entry : paramMap.entrySet()) {
-            if (fieldsMap.containsKey(entry.getKey())) {
-                Field field = fieldsMap.get(entry.getKey());
-                Object value = entry.getValue();
-                if (field.getType().getName().equals("java.lang.Integer")) {
-                    value = NumberUtils.toInt(entry.getValue().toString());
-                } else if (field.getType().getName().equals("java.lang.Long")) {
-                    value = NumberUtils.toLong(entry.getValue().toString());
-                } else if (field.getType().getName().equals("java.util.Date")) {
-                    value = DateStringCalcUtils.stringToDateByGeneralYMDHMS(entry.getValue().toString());
-                }
-                try {
-                    PropertyUtils.setProperty(obj, entry.getKey(), value);
-                } catch (Exception e) {
-                    log.error("bindingPropertyValue error! msg is:" + LogUtils.getErrorMsg(e));
-                }
-            }
-        }
-    }
 }

@@ -1,5 +1,6 @@
 package com.utils;
 
+import lombok.extern.slf4j.Slf4j;
 import org.quartz.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,10 +12,9 @@ import java.util.Map;
 /**
  * 定时任务工具类 by CHENYB date 2019-07-30
  */
+@Slf4j
 @Component
 public class QuartzUtil {
-
-    private static final Logger logger = LoggerFactory.getLogger( QuartzUtil.class );
 
     /**
      * 注入调度器

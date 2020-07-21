@@ -1,22 +1,7 @@
-/**
- * 文件名：LogUtils.java
- * 
- * 北京中油瑞飞信息技术有限责任公司(http://www.richfit.com)
- * Copyright © 2010 北京中油瑞飞信息技术有限责任公司 All Right Reserved.
- */
 package com.utils;
 
 import java.io.ByteArrayOutputStream;
 
-/**
- * <p>
- * <li>Description:</li>
- * <li>$Author$</li>
- * <li>$Revision: 4108 $</li>
- * <li>$Date: 2017-03-06 09:38:17 +0800 (Mon, 06 Mar 2017) $</li>
- * 
- * @version 1.0
- */
 public class LogUtils {
 
     /**

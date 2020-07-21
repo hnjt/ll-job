@@ -1,8 +1,9 @@
 package com.utils;
 
+import com.alibaba.fastjson.JSONObject;
+
 import java.io.Serializable;
 
-import com.alibaba.fastjson.JSONObject;
 @SuppressWarnings("serial")
 public class Interval implements Serializable, Comparable<Interval> {
 	      long start, end;
@@ -76,15 +77,8 @@ public class Interval implements Serializable, Comparable<Interval> {
 			return obj.toString();
 			
 		}
-		/*@Override
-		public int compareTo(Interval o) {
-			Long it = this.start - o.start;
-			int i = it.intValue();
-			return i;
-		} bak*/
 
-	/*-------------------------2019-05-14 by ChenYb iteration ------begin------ -----------*/
-		/*返回-1 false ,1 true , 0 default 二叉树排序算法*/
+
 		@Override
 		public int compareTo(Interval o) {
 
@@ -98,5 +92,4 @@ public class Interval implements Serializable, Comparable<Interval> {
 				return -1;
 			return 0;
 		}
-	/*-------------------------2019-05-14 by ChenYb iteration ------end------ -------------*/
 }

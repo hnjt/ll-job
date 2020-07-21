@@ -1,6 +1,8 @@
 package com.utils;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 
 
 public class IntervalUtil {
@@ -11,7 +13,7 @@ public class IntervalUtil {
 	 * @param child
 	 * @return
 	 */
-	public static boolean contains(List<Interval> parentList,Interval child){
+	public static boolean contains(List<Interval> parentList, Interval child){
 		//先做合并然后再比较
 		List<Interval> mp = merge(parentList);
 		boolean flag = false;
@@ -69,27 +71,4 @@ public class IntervalUtil {
         }
         return result;
     }
-	
-	/**
-	 * @param args
-	 * @throws Exception 
-	 */
-//	public static void main(String[] args) {
-//		//包含测试
-//		Interval int1 = new Interval(1,3);
-//		Interval int2 = new Interval(2,6);
-//		Interval int3 = new Interval(8,10);
-//		Interval int4 = new Interval(15,18);
-//
-//		Interval c = new Interval(6,9);
-//		List<Interval> parent = new ArrayList<Interval>();
-//		parent.add(int1);
-//		parent.add(int2);
-//		parent.add(int3);
-//		parent.add(int4);
-//		Collections.sort(parent);
-//		System.out.println(contains(parent,c));
-//
-//
-//	}
 }

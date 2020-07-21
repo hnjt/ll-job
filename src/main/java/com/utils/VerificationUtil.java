@@ -1,24 +1,15 @@
 package com.utils;
 
-import java.text.SimpleDateFormat;
-import java.util.*;
-
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public class ConvertUtils {
-	
-	public static  Logger logger = LoggerFactory.getLogger(ConvertUtils.class);
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
-	public static String getUUID(){
-    	String uuid = UUID.randomUUID().toString().replace("-", "");
-    	logger.debug("uuid======>长度"+uuid.length()+";内容======>"+uuid);
-    	return uuid;
-    }
+@Slf4j
+public class VerificationUtil {
 
-	/*-------------------------2019-05-14 by ChenYb iteration ------begin------ -----------*/
-
+	//正则规则
 	public final static String regex = "'|#|%|;|--| and | and|and | or | or|or | not | not|not " +
 			"| use | use|use | insert | insert|insert | delete | delete|delete | update | update|update " +
 			"| select | select|select | count | count|count | group | group|group | union | union|union " +
@@ -26,10 +17,10 @@ public class ConvertUtils {
 			"| grant | grant|grant | execute | execute|execute | exec | exec|exec | xp_cmdshell | xp_cmdshell|xp_cmdshell " +
 			"| call | call|call | declare | declare|declare | source | source|source | sql | sql|sql ";
 
-	public static boolean isVaild(String originStr,int DBLength,String verifyRange,boolean notEmpty){
+	public static boolean isValidated(String originStr,int DBLength,String verifyRange,boolean notEmpty){
 		int config = 0;
-		/*是否允许为空*/
-		if (StringUtils.isEmpty(originStr)||StringUtils.isBlank(originStr))
+		/*是否允许为空 ture 不允许为空*/
+		if (StringUtils.isEmpty(originStr)|| StringUtils.isBlank(originStr))
 			if (!notEmpty)
 				return true;
 			else
@@ -37,26 +28,35 @@ public class ConvertUtils {
 
 		/*sql安全值,占位*会报错,这里不限制*/
 		String newOriginStr = originStr.replaceAll("(?i)" + regex, "");
-		logger.debug("analysis before {}",originStr);
-		logger.debug("analysis later {}",newOriginStr);
+		log.debug("analysis before {}",originStr);
+		log.debug("analysis later {}",newOriginStr);
 		if (newOriginStr.length() < originStr.length())
 			config += 1;
+		if (originStr.contains( "{" )
+				&&originStr.contains( "}" )
+				&&originStr.contains( ":" )
+				&&(originStr.contains( "'" )||originStr.contains( "\"" ))
+		){
+			log.debug("analysis JSON ：true --- Length check skip");
+			config = 0;
+		}
+
 
 		/*预订长度范围*/
 		if (0 != DBLength)
 			if (newOriginStr.length() > DBLength)
 				config += 1;
-		logger.debug("analysis valid length {}",DBLength);
-		logger.debug("analysis origin length {}",newOriginStr.length());
+		log.debug("analysis valid length {}",DBLength);
+		log.debug("analysis origin length {}",newOriginStr.length());
 		/*预定值范围*/
 		if (null != verifyRange && StringUtils.isNotEmpty(verifyRange.trim())) {
 			if (!verifyRange.contains(originStr)) {
 				config += 1;
 			}
-			logger.debug("VERIFY RANGE   ==>{}<==",verifyRange);
+			log.debug("VERIFY RANGE   ==>{}<==",verifyRange);
 		}else
-			logger.debug("VERIFY RANGE   ==>{}<==","NOT RANGE!");
-		logger.info("isVaild - config :{}",config);
+			log.debug("VERIFY RANGE   ==>{}<==","NOT RANGE!");
+		log.info("isVaild - config :{}",config);
 		return config==0?true:false;
 	}
 
@@ -109,7 +109,7 @@ public class ConvertUtils {
 	public static boolean verifyType(Object obj,String type){
 		boolean config = false;
 
-		if (null == obj || StringUtils.isEmpty(type)||StringUtils.isBlank(type))
+		if (null == obj || StringUtils.isEmpty(type)|| StringUtils.isBlank(type))
 			return config;
 
 		try {
@@ -147,7 +147,7 @@ public class ConvertUtils {
 
 			config = true;
 		}catch (Exception e){
-			logger.debug("obj : {},不允许转型 {}",obj,type.toUpperCase());
+			log.debug("obj : {},不允许转型 {}",obj,type.toUpperCase());
 		}
 		return config;
 	}

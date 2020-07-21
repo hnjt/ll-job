@@ -38,14 +38,6 @@ public class ConfigureQuartz {
     @Bean
     public SchedulerFactoryBean schedulerFactoryBean(DataSource dataSource, JobFactory jobFactory) throws IOException {
 
-//        SchedulerFactoryBean schedulerFactoryBean = new SchedulerFactoryBean();
-//        schedulerFactoryBean.setJobFactory(new AutowireCapableBeanJobFactory(this.applicationContext.getAutowireCapableBeanFactory()));
-//        // 如果配置了spring.quartz.properties
-//        if (!this.properties.getProperties().isEmpty()) {
-//            //  将所有properties设置到QuartzProperties
-//            schedulerFactoryBean.setQuartzProperties(this.asProperties(this.properties.getProperties()));
-//        }
-
         SchedulerFactoryBean factory = new SchedulerFactoryBean();
         //可选,QuartzScheduler启动时更新己存在的Job,这样就不用每次修改targetObject后删除qrtz_job_details表对应记录
         factory.setOverwriteExistingJobs(true);

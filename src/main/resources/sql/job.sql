@@ -19,49 +19,38 @@ DROP TABLE IF EXISTS QRTZ_TRIGGERS;
 DROP TABLE IF EXISTS QRTZ_JOB_DETAILS;
 DROP TABLE IF EXISTS QRTZ_CALENDARS;
 DROP TABLE IF EXISTS QRTZ_JOB_ENTITY;
-DROP TABLE IF EXISTS QRTZ_JOB_DTO;
+DROP TABLE IF EXISTS QRTZ_JOB_DICTIONARY;
 -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 -- ************************************************************************************************************************************************** --
 -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 -- Table structure for qrtz_job_entity job实体类,主要任务控制表
-CREATE TABLE QRTZ_JOB_ENTITY (
-`job_id` varchar(32) NOT NULL,
-`job_name` varchar(255) DEFAULT NULL,
-`job_group` varchar(255) DEFAULT NULL,
-`job_cron` varchar(255) DEFAULT NULL,
-`task_type` varchar(255) NOT NULL,
-`job_description` varchar(255) DEFAULT NULL,
-`vm_param` varchar(255) DEFAULT NULL,
-`fqdn` varchar(255) NOT NULL COMMENT '全限定名',
-`jar_path` varchar(255) DEFAULT NULL,
-`status` varchar(1) DEFAULT NULL,
-`creator` varchar(32) DEFAULT NULL,
-`modifier` varchar(32) DEFAULT NULL,
-`create_date` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
-`modify_date` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
-PRIMARY KEY (`job_id`)
+CREATE TABLE `QRTZ_JOB_ENTITY` (
+  `job_id` varchar(32) NOT NULL,
+  `job_name` varchar(255) DEFAULT NULL,
+  `job_type` varchar(255) DEFAULT NULL,
+  `job_group` varchar(255) DEFAULT NULL,
+  `job_cron` varchar(255) DEFAULT NULL,
+  `task_type` varchar(255) NOT NULL,
+  `job_description` varchar(255) DEFAULT NULL,
+  `vm_param` varchar(255) DEFAULT NULL,
+  `fqdn` varchar(255) NOT NULL COMMENT '全限定名',
+  `jar_path` varchar(255) DEFAULT NULL,
+  `status` varchar(1) DEFAULT NULL,
+  `creator` varchar(32) DEFAULT NULL,
+  `modifier` varchar(32) DEFAULT NULL,
+  `create_date` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `modify_date` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `job_cnt` varchar(11) DEFAULT NULL COMMENT '执行期数',
+  PRIMARY KEY (`job_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 -- ----------------------------
--- Table structure for qrtz_job_dto
+-- 任务字典 存储执行体权限定名
 -- ----------------------------
-CREATE TABLE QRTZ_JOB_DTO (
-`job_id` varchar(32) NOT NULL,
-`create_type` varchar(255) DEFAULT NULL COMMENT '创建类别',
-`rule_type` varchar(255) DEFAULT NULL COMMENT '规则类型',
-`tool_type` varchar(1) DEFAULT NULL COMMENT '工具类型 0：自动选择工具 1：指定工具',
-`tools` varchar(255) DEFAULT NULL,
-`task_org_id` varchar(255) DEFAULT NULL,
-`task_org_name` varchar(255) DEFAULT NULL,
-`check_type` varchar(255) DEFAULT NULL COMMENT '检查类型',
-`ip` varchar(255) DEFAULT NULL,
-`execute_type` varchar(255) DEFAULT NULL,
-`ports` varchar(255) DEFAULT NULL,
-`snmp` varchar(255) DEFAULT NULL,
-`ip_lists` varchar(255) DEFAULT NULL,
-`week_day` varchar(255) DEFAULT NULL,
-`month_day` varchar(255) DEFAULT NULL,
-`year_day` varchar(255) DEFAULT NULL,
-PRIMARY KEY (`job_id`)
+CREATE TABLE `QRTZ_JOB_DICTIONARY` (
+  `ID` int(11) NOT NULL AUTO_INCREMENT,
+  `CODE` varchar(50) DEFAULT NULL,
+  `PATH_CODE` varchar(50) DEFAULT NULL,
+  PRIMARY KEY (`ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 -- 存储每一个已配置的Job的详细信息
 CREATE TABLE QRTZ_JOB_DETAILS(

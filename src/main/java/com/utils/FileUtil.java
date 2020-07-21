@@ -1,36 +1,98 @@
 package com.utils;
 
-import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.RandomAccessFile;
-import java.io.Reader;
+
+import com.commons.DownloadVo;
+import com.sun.deploy.net.URLEncoder;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.FileItemFactory;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.commons.CommonsMultipartFile;
+
+import javax.servlet.http.HttpServletRequest;
+import java.io.*;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
-/**
- *
- * @类名: FileUtil
- * @作用: TODO
- * @日期: 2012-3-1 下午04:58:31
- */
-
+@Slf4j
 public class FileUtil {
 
-	public static byte[] File2byte(String filePath) {
+	/**
+	 * 文件转换为 MultipartFile
+	 * @param picPath
+	 * @return
+	 */
+	public static MultipartFile getMulFileByPath(String picPath){
+		FileItem fileItem = createFileItem(picPath);
+		CommonsMultipartFile mfile = new CommonsMultipartFile( fileItem );
+		return mfile;
+	}
+
+	private static FileItem createFileItem(String filePath)
+	{
+		FileItemFactory factory = new DiskFileItemFactory(16, null);
+		String textFieldName = "textField";
+		int num = filePath.lastIndexOf(".");
+		String extFile = filePath.substring(num);
+		FileItem item = factory.createItem(textFieldName, "text/plain", true,
+				"MyFileName" + extFile);
+		File newfile = new File(filePath);
+		int bytesRead = 0;
+		byte[] buffer = new byte[8192];
+		try
+		{
+			FileInputStream fis = new FileInputStream(newfile);
+			OutputStream os = item.getOutputStream();
+			while ((bytesRead = fis.read(buffer, 0, 8192))
+					!= -1)
+			{
+				os.write(buffer, 0, bytesRead);
+			}
+			os.close();
+			fis.close();
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+		return item;
+	}
+
+	/**
+	 * 处理文件名乱码
+	 * @param request
+	 * @return
+	 */
+	public static String encodeFileName (HttpServletRequest request, String fileName){
+//		String fileName = LocalDate.now().toString()+".xls";
+		try {
+			HttpHeaders headers = new HttpHeaders();
+			String userAgent = request.getHeader( "Login-Agent" );//获取浏览器
+			if (userAgent.contains("firefox")) {
+				fileName = new String(fileName.getBytes("UTF-8"), "ISO8859-1"); // firefox
+			} else if (userAgent.contains("MSIE")) {
+				fileName = URLEncoder.encode(fileName, "UTF-8");// IE
+			}else if (userAgent.contains("CHROME")) {
+				fileName = new String(fileName.getBytes("UTF-8"), "ISO8859-1");// Google
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return fileName;
+	}
+
+	/**
+	 * 文件转换byte流
+	 * @param filePath
+	 * @return
+	 */
+	public static byte[] file2Byte(String filePath) {
 		byte[] buffer = null;
 		try {
 			File file = new File(filePath);
@@ -52,6 +114,12 @@ public class FileUtil {
 		return buffer;
 	}
 
+	/**
+	 * byte流转换file
+	 * @param buf
+	 * @param filePath
+	 * @param fileName
+	 */
 	public static void byte2File(byte[] buf, String filePath, String fileName) {
 		BufferedOutputStream bos = null;
 		FileOutputStream fos = null;
@@ -83,6 +151,21 @@ public class FileUtil {
 				}
 			}
 		}
+	}
+
+	/**
+	 * 返回文件下载链接
+	 * @param request
+	 * @param downloadVo
+	 * @return
+	 */
+	public static ResponseEntity<byte[]> getFileLinks(HttpServletRequest request, DownloadVo downloadVo){
+		HttpHeaders headers = new HttpHeaders();
+		String fileName = encodeFileName(request, downloadVo.getFileName());
+		headers.setContentDispositionFormData("attachment", fileName);
+		headers.setContentType( MediaType.APPLICATION_OCTET_STREAM);
+		// 返回下载文件
+		return new ResponseEntity<byte[]>(downloadVo.getData(), headers, HttpStatus.OK);
 	}
 
 	/**
@@ -149,7 +232,7 @@ public class FileUtil {
 				// 但如果这两个字符分开显示时，会换两次行。
 				// 因此，屏蔽掉r，或者屏蔽n。否则，将会多出很多空行。
 				if (((char) tempchar) != 'r') {
-					System.out.print((char) tempchar);
+					log.info(""+(char) tempchar);
 				}
 			}
 			reader.close();
@@ -172,7 +255,7 @@ public class FileUtil {
 						if (tempchars[i] == 'r') {
 							continue;
 						} else {
-							System.out.print(tempchars[i]);
+							log.info(""+tempchars[i]);
 						}
 					}
 				}
@@ -304,7 +387,7 @@ public class FileUtil {
 	 */
 	private static void showAvailableBytes(InputStream in) {
 		try {
-			System.out.println("当前字节输入流中的字节数为:" + in.available());
+			log.info("当前字节输入流中的字节数为:" + in.available());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -359,12 +442,6 @@ public class FileUtil {
 		}
 	}
 
-//	public static void main(String[] args) {
-//		String fileName = "C:/Users/wang/Desktop/logs/localhost_access_log.2018-11-27.txt";
-//		FileOutputStream out;
-//		String name = "C:/Users/wang/Desktop/logs/2018-11-27.txt";
-//		readFileByLines(fileName, name);
-//	}
 
 	/**
 	 * 文件复制函数，参数是两个全路径文件名，如果发生错误，将抛出FileCopyException异常
@@ -402,7 +479,7 @@ public class FileUtil {
 						String NewDesc_Name = dest_name.substring(0, dest_name.length() - 4);
 						String EndName = dest_name.substring((dest_name.length() - 3));
 						// NewDesc_Name +="_"+ new Date()+ "." + EndName;
-						NewDesc_Name += "_" + new java.text.SimpleDateFormat("yyyy-MM-dd").format(new Date()) + "."
+						NewDesc_Name += "_" + new SimpleDateFormat("yyyy-MM-dd").format(new Date()) + "."
 								+ EndName;
 						dest_name = NewDesc_Name;
 						destination_file = new File(NewDesc_Name);
@@ -504,7 +581,7 @@ public class FileUtil {
 						String NewDesc_Name = dest_name.substring(0, dest_name.length() - 4);
 						String EndName = dest_name.substring((dest_name.length() - 3));
 						// NewDesc_Name +="_"+ new Date()+ "." + EndName;
-						NewDesc_Name += "_" + new java.text.SimpleDateFormat("yyyy-MM-dd").format(new Date()) + "."
+						NewDesc_Name += "_" + new SimpleDateFormat("yyyy-MM-dd").format(new Date()) + "."
 								+ EndName;
 						dest_name = NewDesc_Name;
 						destination_file = new File(NewDesc_Name);
@@ -572,7 +649,7 @@ public class FileUtil {
 			if (f.isAbsolute()) {
 				return new File(File.separator);
 			} else {
-				return new File(System.getProperty("template.dir"));
+				return new File(System.getProperty("user.dir"));
 			}
 		}
 		return new File(dirname);
@@ -584,5 +661,4 @@ class FileCopyException extends IOException {
 	public FileCopyException(String msg) {
 		super(msg);
 	}
-
 }
