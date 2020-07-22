@@ -1,14 +1,14 @@
 package com.ll.job.service.impl;
 
-import com.commons.BaseService;
+import com.ll.commons.BaseService;
+import com.ll.commons.CommonsUtil;
 import com.ll.job.dao.JobDictionaryRepository;
 import com.ll.job.dao.JobEntityRepository;
+import com.ll.job.service.JobService;
+import com.ll.utils.DateCommutativeCronUtil;
 import com.ll.job.domain.JobDictionary;
 import com.ll.job.domain.JobEntity;
 import com.ll.job.mapper.JobMapper;
-import com.ll.job.service.JobService;
-import com.utils.ConvertUtils;
-import com.utils.DateCommutativeCronUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.quartz.*;
@@ -104,36 +104,44 @@ public class JobServiceImpl extends BaseService implements JobService {
 
     //添加/修改定时任务
     @Override
-    public JobEntity addOrUpdateJob(Map<String,String> paramsMap, JobEntity job) throws ParseException {
+    public JobEntity addOrUpdateJob(String userId,String code, JobEntity job) throws Exception {
 
         log.info( "manner of execution addOrUpdateJob!");
 
         if (null == job)
             throw new RuntimeException( "空数据" );
+
+        String[] et = {"0","0","0","0"};
+        String executionTime = job.getJobExecutionTime();
+        if (StringUtils.isNotBlank( executionTime ))
+            et=job.getJobExecutionTime().split( "," );
+
         //时间转换
-        String scheduleType = paramsMap.get( "scheduleType" );
-        Date date = new Date();
-        Long currentDate = Long.valueOf( paramsMap.getOrDefault( "currentDate", date.getTime()+""));
-        if ("1".equals(scheduleType)){
+
+        Long currentDate = Long.valueOf(et[0]);
+        if (StringUtils.isNotBlank( executionTime )&&!et[0].equals( "0" )){
             job.setJobCron( DateCommutativeCronUtil.getCron( new Date(currentDate)).replace( "00","0" ) );
             job.setJobCnt( currentDate+"/1" );//指定时间执行任务，cnt为1
-            job.setJobType( "TIMING" );
-        }else if ("2".equals(scheduleType)){
-            job.setJobCron( this.getCronDate( paramsMap ) );
-            job.setJobType( "CYCLE" );
-            if (StringUtils.isBlank( job.getJobCnt() ))
-                job.setJobCnt( currentDate+"/N" );
-            else
-                job.setJobCnt("0/"+job.getJobCnt());
+            et[0] = String.valueOf( currentDate );
+            job.setJobExecutionTime( String.valueOf( et ) );
+        }else if (StringUtils.isNotBlank( executionTime )&&et[0].equals( "0" )){
+            job.setJobCron( this.getCronDate( et ) );
+
+            if (StringUtils.isBlank( job.getJobCnt() )){
+                et[4] = "N";
+                job.setJobExecutionTime( String.valueOf( et ) );
+                job.setJobCnt( "N/N" );
+            }else
+                job.setJobCnt("0/"+job.getJobCnt().toUpperCase());
         }
         //校验名字唯一性
         if (this.nameIsExist(job))
             throw new RuntimeException( "任务名称已存在" );
-        job.setFqdn( this.getJobExecute( job.getTaskType().toUpperCase()));
+        job.setFqdn( this.getJobExecute( code));
 
         if (StringUtils.isBlank( job.getJobId() )){
-            job.setJobId( ConvertUtils.getUUID());
-            job.setCreator( paramsMap.get( "userId" ) );
+            job.setJobId( CommonsUtil.getUUID() );
+            job.setCreator( userId );
             job.setCreateDate( new Date(  ) );
             job = this.repository.save( job );
         }else {
@@ -145,36 +153,27 @@ public class JobServiceImpl extends BaseService implements JobService {
             if (map.containsKey( "status" ) && Integer.valueOf( map.get( "status" ).toString() ) == 1)//运行中的任务不允许修改
                 throw new RuntimeException( "运行中的任务不允许编辑" );
             if (StringUtils.isBlank( job.getJobName() ))
-                job.setJobName( map.getOrDefault( "name","" ).toString() );
+                job.setJobName( map.getOrDefault( "jobName","" ).toString() );
             if (StringUtils.isBlank( job.getJobGroup() ))
-                job.setJobGroup( map.getOrDefault( "group","" ).toString() );
-            if (StringUtils.isBlank( job.getJobType() ))
-                job.setJobType( map.getOrDefault( "type","" ).toString() );
+                job.setJobGroup( map.getOrDefault( "jobGroup","" ).toString() );
+            if (StringUtils.isBlank( job.getJobExecutionTime() ))
+                job.setJobExecutionTime( map.getOrDefault( "jobExecutionTime","" ).toString() );
             if (StringUtils.isBlank( job.getJobCron() ))
-                job.setJobCron( map.getOrDefault( "cron","" ).toString() );
+                job.setJobCron( map.getOrDefault( "jobCron","" ).toString() );
             if (StringUtils.isBlank( job.getJobCnt() ))
-                job.setJobCnt( map.getOrDefault( "cnt","" ).toString() );
-            if (StringUtils.isBlank( job.getTaskType() ))
-                job.setJobCnt( map.getOrDefault( "taskType","" ).toString() );
-            if (StringUtils.isBlank( job.getDescription() ))
-                job.setDescription( map.getOrDefault( "description","" ).toString() );
-            if (StringUtils.isBlank( job.getVmParam() ))
-                job.setVmParam( map.getOrDefault( "vmParam","" ).toString() );
-            if (StringUtils.isBlank( job.getFqdn() ))
-                job.setFqdn( map.getOrDefault( "fqdn","" ).toString() );
-            if (StringUtils.isBlank( job.getJarPath() ))
-                job.setJarPath( map.getOrDefault( "jarPath","" ).toString() );
+                job.setJobCnt( map.getOrDefault( "jobCnt","" ).toString() );
+            if (StringUtils.isBlank( job.getJobDescription() ))
+                job.setJobDescription( map.getOrDefault( "jobDescription","" ).toString() );
             if (StringUtils.isBlank( job.getStatus() ))
                 job.setStatus( map.getOrDefault( "status","" ).toString() );
             if (StringUtils.isBlank( job.getCreator() ))
                 job.setCreator( map.getOrDefault( "creator","" ).toString() );
             if (null == job.getCreateDate() ){
-                SimpleDateFormat format = new SimpleDateFormat("yyyy-M-dd HH:mm:ss");
-                Date d=format.parse(map.get("FORMENDTIME").toString());
-                job.setCreateDate(d);
+                Date createDate = (Date) map.get( "createDate" );
+                job.setCreateDate(createDate);
             }
 
-            job.setModifier( paramsMap.get( "userId" ) );
+            job.setModifier( userId );
             job.setModifyDate( new Date(  ) );
             job = this.updateJob( job );
         }
@@ -203,18 +202,19 @@ public class JobServiceImpl extends BaseService implements JobService {
     }
 
     //cron 时间转换
-    private String getCronDate(Map<String,String> paramsMap){
+    private String getCronDate(String[] et){
 
         String result = "";
-        String weekDay = paramsMap.get( "weekDay" );
-        String monthDay = paramsMap.get( "monthDay" );
-        String yearDay = paramsMap.get( "yearDay" );
-        if (StringUtils.isNotBlank( weekDay )){
+        String weekDay = et[3];
+        String monthDay = et[2];
+        String yearDay = et[1];
+
+        if (StringUtils.isNotBlank( weekDay )&&!weekDay.equals( "0" )){
             String[] strArray = {"SUN","MON","TUE","WED","THU","FRI","SAT"};
             result = "* * * ? * "+strArray[Integer.valueOf( weekDay )-1];//每周星期?执行
-        }else if (StringUtils.isNotBlank( monthDay )){
+        }else if (StringUtils.isNotBlank( monthDay )&&!monthDay.equals( "0" )){
             result = "* * * "+monthDay+" * ?";//每月?号执行
-        }else if (StringUtils.isNotBlank( yearDay )){
+        }else if (StringUtils.isNotBlank( yearDay )&&!yearDay.equals( "0" )){
             String[] split = yearDay.split( "-" );
             result = "* * * "+split[1]+" "+split[0]+" ? *";//每年的?月?日执行
         }

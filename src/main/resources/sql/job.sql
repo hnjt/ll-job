@@ -24,24 +24,25 @@ DROP TABLE IF EXISTS QRTZ_JOB_DICTIONARY;
 -- ************************************************************************************************************************************************** --
 -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 -- Table structure for qrtz_job_entity job实体类,主要任务控制表
+-- ----------------------------
+-- Table structure for qrtz_job_entity
+-- ----------------------------
+DROP TABLE IF EXISTS `QRTZ_JOB_ENTITY`;
 CREATE TABLE `QRTZ_JOB_ENTITY` (
-  `job_id` varchar(32) NOT NULL,
-  `job_name` varchar(255) DEFAULT NULL,
-  `job_type` varchar(255) DEFAULT NULL,
-  `job_group` varchar(255) DEFAULT NULL,
-  `job_cron` varchar(255) DEFAULT NULL,
-  `task_type` varchar(255) NOT NULL,
-  `job_description` varchar(255) DEFAULT NULL,
-  `vm_param` varchar(255) DEFAULT NULL,
-  `fqdn` varchar(255) NOT NULL COMMENT '全限定名',
-  `jar_path` varchar(255) DEFAULT NULL,
-  `status` varchar(1) DEFAULT NULL,
-  `creator` varchar(32) DEFAULT NULL,
-  `modifier` varchar(32) DEFAULT NULL,
-  `create_date` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
-  `modify_date` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
-  `job_cnt` varchar(11) DEFAULT NULL COMMENT '执行期数',
-  PRIMARY KEY (`job_id`)
+`JOB_ID` varchar(32) NOT NULL,
+`JOB_NAME` varchar(59) DEFAULT NULL,
+`JOB_EXECUTION_TIME` varchar(11) DEFAULT NULL COMMENT '任务类型（CYCLE:周期；TIMING:定时）',
+`JOB_GROUP` varchar(50) DEFAULT NULL,
+`JOB_CRON` varchar(50) DEFAULT NULL COMMENT 'cron语言',
+`JOB_DESCRIPTION` varchar(100) DEFAULT NULL COMMENT '描述',
+`FQDN` varchar(50) NOT NULL COMMENT '全限定名',
+`STATUS` varchar(1) DEFAULT NULL COMMENT '0:停止；1:执行；2:执行完毕',
+`JOB_CNT` varchar(11) DEFAULT NULL COMMENT '执行期数',
+`CREATOR` varchar(32) DEFAULT NULL,
+`MODIFIER` varchar(32) DEFAULT NULL,
+`CREATE_DATE` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+`MODIFY_DATE` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+PRIMARY KEY (`JOB_ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 -- ----------------------------
 -- 任务字典 存储执行体权限定名

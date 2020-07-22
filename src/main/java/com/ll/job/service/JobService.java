@@ -31,7 +31,7 @@ public interface JobService {
     JobKey getJobKey(JobEntity job) ;
 
     //添加/修改定时任务
-    JobEntity addOrUpdateJob (Map<String, String> paramsMap, JobEntity job) throws ParseException;
+    JobEntity addOrUpdateJob (String userId,String code, JobEntity job) throws Exception;
 
     //删除Job持久化
     void deleteJob (String id);

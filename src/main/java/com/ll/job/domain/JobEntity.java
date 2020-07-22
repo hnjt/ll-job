@@ -1,47 +1,51 @@
 package com.ll.job.domain;
+import com.ll.commons.EntityVo;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 
 @Entity
 @Table(name = "QRTZ_JOB_ENTITY")
-public class JobEntity implements Serializable {
+public class JobEntity extends EntityVo implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+
     @Id
-    @Column(name = "job_id")
     private String jobId;
-    @Column(name = "job_name")
+
     private String jobName;          //job名称
-    @Column(name = "job_group")
+
+    /**
+     * 执行时间 (0,0,0,0,0)
+     * 第1位指定时间戳（标识指定时间）；
+     * 第2、3、4位表示执行周期的年、月、周
+     * 第5位表示 确切的时间 24小时制 例如：23:22:11
+     * 第5位表示 轮询时间 例如
+     * **:**:01 间隔1秒钟执行
+     * **:01:** 间隔1分钟执行
+     * 01:**:** 间隔1小时执行
+     */
+    private String jobExecutionTime;
+
     private String jobGroup;         //job组名
-    @Column(name = "jobType")
-    private String jobType;        //下发类型
-    @Column(name = "job_cron")
+
     private String jobCron;          //执行的cron
-    @Column(name = "job_cnt")
-    private String jobCnt;          //执行的期数
-    @Column(name = "task_type")
-    private String taskType;      //任务类别
-    @Column(name = "job_description")
-    private String description;   //job描述信息
-    @Column(name = "vm_param")
-    private String vmParam;       //vm参数
+
+    private String jobDescription;   //job描述信息
 
     private String fqdn;       //全限定名
-    @Column(name = "jar_path")
-    private String jarPath;       //job的jar路径,在这里我选择的是定时执行一些可执行的jar包
-    private String status;        //job的执行状态,这里我设置为2,1,0且只有该值为1才会执行该Job,0:停止；1:执行；2:执行完毕
-    private String creator;        //创建人
-    private String modifier;        //更新人
-    @Column(name = "create_date")
-    private Date createDate;        //创建时间
-    @Column(name = "modify_date")
-    private Date modifyDate;        //更新时间
+
+    //job的执行状态,这里我设置为2,1,0且只有该值为1才会执行该Job,0:停止；1:执行；2:执行完毕
+    private String status;
+
+    private String jobCnt;          //执行的期数
+
+
+
     public JobEntity() {
     }
-
 
     public String getJobId() {
         return jobId;
@@ -59,20 +63,20 @@ public class JobEntity implements Serializable {
         this.jobName = jobName;
     }
 
+    public String getJobExecutionTime() {
+        return jobExecutionTime;
+    }
+
+    public void setJobExecutionTime(String jobExecutionTime) {
+        this.jobExecutionTime = jobExecutionTime;
+    }
+
     public String getJobGroup() {
         return jobGroup;
     }
 
     public void setJobGroup(String jobGroup) {
         this.jobGroup = jobGroup;
-    }
-
-    public String getJobType() {
-        return jobType;
-    }
-
-    public void setJobType(String jobType) {
-        this.jobType = jobType;
     }
 
     public String getJobCron() {
@@ -83,36 +87,12 @@ public class JobEntity implements Serializable {
         this.jobCron = jobCron;
     }
 
-    public String getJobCnt() {
-        return jobCnt;
+    public String getJobDescription() {
+        return jobDescription;
     }
 
-    public void setJobCnt(String jobCnt) {
-        this.jobCnt = jobCnt;
-    }
-
-    public String getTaskType() {
-        return taskType;
-    }
-
-    public void setTaskType(String taskType) {
-        this.taskType = taskType;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getVmParam() {
-        return vmParam;
-    }
-
-    public void setVmParam(String vmParam) {
-        this.vmParam = vmParam;
+    public void setJobDescription(String jobDescription) {
+        this.jobDescription = jobDescription;
     }
 
     public String getFqdn() {
@@ -123,14 +103,6 @@ public class JobEntity implements Serializable {
         this.fqdn = fqdn;
     }
 
-    public String getJarPath() {
-        return jarPath;
-    }
-
-    public void setJarPath(String jarPath) {
-        this.jarPath = jarPath;
-    }
-
     public String getStatus() {
         return status;
     }
@@ -139,74 +111,25 @@ public class JobEntity implements Serializable {
         this.status = status;
     }
 
-    public String getCreator() {
-        return creator;
+    public String getJobCnt() {
+        return jobCnt;
     }
 
-    public void setCreator(String creator) {
-        this.creator = creator;
-    }
-
-    public String getModifier() {
-        return modifier;
-    }
-
-    public void setModifier(String modifier) {
-        this.modifier = modifier;
-    }
-
-    public Date getCreateDate() {
-        return createDate;
-    }
-
-    public void setCreateDate(Date createDate) {
-        this.createDate = createDate;
-    }
-
-    public Date getModifyDate() {
-        return modifyDate;
-    }
-
-    public void setModifyDate(Date modifyDate) {
-        this.modifyDate = modifyDate;
-    }
-
-    @Override
-    public String toString() {
-        return "JobEntity{" +
-                "jobId='" + jobId + '\'' +
-                ", jobName='" + jobName + '\'' +
-                ", jobGroup='" + jobGroup + '\'' +
-                ", jobType='" + jobType + '\'' +
-                ", jobCron='" + jobCron + '\'' +
-                ", jobCnt='" + jobCnt + '\'' +
-                ", taskType='" + taskType + '\'' +
-                ", description='" + description + '\'' +
-                ", vmParam='" + vmParam + '\'' +
-                ", fqdn='" + fqdn + '\'' +
-                ", jarPath='" + jarPath + '\'' +
-                ", status='" + status + '\'' +
-                ", creator='" + creator + '\'' +
-                ", modifier='" + modifier + '\'' +
-                ", createDate=" + createDate +
-                ", modifyDate=" + modifyDate +
-                '}';
+    public void setJobCnt(String jobCnt) {
+        this.jobCnt = jobCnt;
     }
 
     //新增Builder模式,可选,选择设置任意属性初始化对象
     public JobEntity(Builder builder) {
         jobId =  builder.id;
         jobName = builder.name;
+        jobExecutionTime = builder.executionTime;
         jobGroup = builder.group;
         jobCron = builder.cron;
-        jobCnt = builder.cnt;
-        jobType = builder.type;
-        taskType = builder.taskType;
-        description = builder.description;
-        vmParam = builder.vmParam;
-        vmParam = builder.fqdn;
-        jarPath = builder.jarPath;
+        jobDescription = builder.description;
+        fqdn = builder.fqdn;
         status = builder.status;
+        jobCnt = builder.cnt;
         creator = builder.creator;
         modifier = builder.modifier;
         createDate = builder.createDate;
@@ -215,16 +138,13 @@ public class JobEntity implements Serializable {
     public static class Builder {
         private String id;
         private String name = "";          //job名称
+        private String executionTime = "";          //下发类型
         private String group = "";         //job组名
         private String cron = "";          //执行的cron
-        private String cnt = "";          //执行的期数
-        private String type = "";          //下发类型
-        private String taskType = "";     //job的参数
         private String description = "";   //job描述信息
-        private String vmParam = "";       //vm参数
         private String fqdn = "";          //全限定名
-        private String jarPath = "";       //job的jar路径
         private String status = "";        //job的执行状态,只有该值为OPEN才会执行该Job
+        private String cnt = "";          //执行的期数
         private String creator = "";        //创建人
         private String modifier = "";        //更新人
         private Date createDate = null;        //创建时间
@@ -237,6 +157,10 @@ public class JobEntity implements Serializable {
             name = n;
             return this;
         }
+        public Builder withET(String et) {
+            executionTime = et;
+            return this;
+        }
         public Builder withGroup(String g) {
             group = g;
             return this;
@@ -245,36 +169,20 @@ public class JobEntity implements Serializable {
             cron = c;
             return this;
         }
-        public Builder withCnt(String c2) {
-            cnt = c2;
-            return this;
-        }
-        public Builder withT(String t) {
-            type = t;
-            return this;
-        }
-        public Builder withtaskType(String p) {
-            taskType = p;
-            return this;
-        }
         public Builder withDescription(String d) {
             description = d;
-            return this;
-        }
-        public Builder withVMtaskType(String vm) {
-            vmParam = vm;
             return this;
         }
         public Builder withFQDN(String fq) {
             fqdn = fqdn;
             return this;
         }
-        public Builder withJarPath(String jar) {
-            jarPath = jar;
-            return this;
-        }
         public Builder withStatus(String s) {
             status = s;
+            return this;
+        }
+        public Builder withCnt(String c2) {
+            cnt = c2;
             return this;
         }
         public Builder withCreator(String c) {
