@@ -266,4 +266,9 @@ public class JobServiceImpl extends BaseService implements JobService {
         resultMap.put( "total", size);
         return resultMap;
     }
+
+    @Override
+    public List<JobDictionary> findAllDictionary (){
+        return this.jobDictionaryRepository.findAll();
+    }
 }

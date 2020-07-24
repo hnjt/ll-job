@@ -128,7 +128,6 @@ public class JobController extends BaseController {
     public String deleteJobs (
             HttpServletRequest request,
             @ApiParam(required = true, name = "ids", value = "多个id逗号拼接") @RequestParam(name = "ids", required = true) String ids,
-            @ApiParam(required = true, name = "token", value = "token") @RequestParam(name = "token", required = true) String token,
             @ApiParam(required = true, name = "userId", value = "userId") @RequestParam(name = "userId", required = true) String userId
     )throws Exception {
         ResultVo resultVo = new ResultVo();
@@ -150,7 +149,6 @@ public class JobController extends BaseController {
             @ApiParam(required = true, name = "pageSize", value = "每页数据数量") @RequestParam(name = "pageSize", required = true) Integer pageSize,
             @ApiParam(required = false, name = "name", value = "任务名") @RequestParam(name = "name", required = false) String name,
             @ApiParam(required = false, name = "ip", value = "包含IP") @RequestParam(name = "ip", required = false) String ip,
-            @ApiParam(required = true, name = "token", value = "用户信息token") @RequestParam(name = "token", required = true) String token,
             @ApiParam(required = true, name = "userId", value = "用户Id") @RequestParam(name = "userId", required = true) String userId
     ){
 
@@ -168,12 +166,21 @@ public class JobController extends BaseController {
     @GetMapping(value = "/getJob")
     public String getJob(
             HttpServletRequest request,
-            @ApiParam(required = true, name = "token", value = "用户信息token") @RequestParam(name = "token", required = true) String token,
             @ApiParam(required = true, name = "id", value = "任务ID") @RequestParam(name = "id", required = true) String id
     ){
 
         ResultVo resultVo = new ResultVo();
         resultVo.setData( this.jobService.getJobEntityById( id ) );
+        return resultVo.toJSONString();
+    }
+
+    @ApiOperation(value = "任务字典", notes = "[ 获取任务权限定名信息 ]")
+    @GetMapping(value = "/findAllDictionary")
+    public String findAllDictionary(
+            HttpServletRequest request
+    ){
+        ResultVo resultVo = new ResultVo();
+        resultVo.setData( this.jobService.findAllDictionary(  ));
         return resultVo.toJSONString();
     }
 }

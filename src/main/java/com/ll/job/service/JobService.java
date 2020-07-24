@@ -1,5 +1,6 @@
 package com.ll.job.service;
 
+import com.ll.job.domain.JobDictionary;
 import com.ll.job.domain.JobEntity;
 import org.quartz.*;
 
@@ -54,4 +55,6 @@ public interface JobService {
     JobEntity updateJob(String id, String status);
 
     void destory();
+
+    List<JobDictionary> findAllDictionary();
 }
