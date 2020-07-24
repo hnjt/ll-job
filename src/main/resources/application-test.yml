@@ -1,4 +1,7 @@
 spring:
+  application:
+    name: ll-job
+
   ## mysql配置
   datasource:
     name: druidDataSource
@@ -9,9 +12,6 @@ spring:
     password:
     hikari:
       schema: classpath:sql
-
-  application:
-    name: ll-job
 
 eureka:
   client:

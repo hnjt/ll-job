@@ -1,4 +1,8 @@
 spring:
+
+  application:
+    name: ll-job
+
   ## mysql配置
   datasource:
     name: druidDataSource

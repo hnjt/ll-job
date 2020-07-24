@@ -1,13 +1,11 @@
-package com.ll.job.feign;
+package com.ll.feign;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 @Component
 @FeignClient(name = "ll-admin")
-public interface FeignService {
+public interface AdminFeign {
 
     /**
      * feign 接口注入方式
