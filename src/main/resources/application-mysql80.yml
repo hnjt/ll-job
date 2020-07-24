@@ -9,3 +9,15 @@ spring:
     password: root
     hikari:
       schema: classpath:sql
+
+eureka:
+  client:
+    enabled: true
+    registry-fetch-interval-seconds: 10
+    service-url:
+      # default-zone 不可以（目前只能这么写）
+      defaultZone:  http://127.0.0.1:8080/eureka/
+  instance:
+    prefer-ip-address: true
+    lease-renewal-interval-in-seconds: 5
+    lease-expiration-duration-in-seconds: 15
